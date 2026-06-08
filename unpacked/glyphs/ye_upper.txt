@@ -1,0 +1,14 @@
+# Glyph U+0404  bw=10 bh=13
+.11111111.
+119dffd911
+19ffeeff91
+1ef9119fe1
+1111111ef1
+..19fffef1
+..1fffeef1
+..1111bef1
+1111111ef1
+1efa119fe1
+19ffeeff91
+119dffd911
+.11111111.
