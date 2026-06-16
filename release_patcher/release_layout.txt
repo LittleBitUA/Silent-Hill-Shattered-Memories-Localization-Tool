@@ -1,0 +1,70 @@
+================================================================
+ Структура папок для патчера UA-локалізації SH:SM PS2
+================================================================
+
+--- РЕЛІЗНА ПАПКА (те, що пакуємо у ZIP/RAR для користувачів) ---
+
+Silent_Hill_Shattered_Memories_PS2_UA_Patch/
+├── PATCH_UA.bat                          ← головний файл, його запускає користувач
+├── xdelta3.exe                           ← Windows-збірка xdelta3 (див. нижче)
+├── LittleBit_SHSM_PS2_UA_v0.8.xdelta     ← створюється make_patch.bat (із dev-папки)
+├── README_UA.txt                         ← документація для користувача
+└── HASHES.txt                            ← контрольні суми
+
+КРИТИЧНО: ні чистого, ні українського ISO в релізній папці НЕМАЄ.
+Розповсюджуєш ZIP з 5 файлів — гру користувач підставляє свою.
+
+
+--- DEV-ПАПКА (тільки у тебе, не для розповсюдження) ---
+
+dev/
+├── make_patch.bat                        ← створює .xdelta + оновлює HASHES.txt
+├── xdelta3.exe                           ← та сама копія, що піде в реліз
+├── SHSM_clean.iso                        ← чистий NTSC-U дамп (твоя приватна копія)
+└── SHSM_UA.iso                           ← готовий український ISO з твого білд-пайплайну
+
+
+--- ПРОЦЕС ВИПУСКУ ---
+
+1. Скачай xdelta3 для Windows:
+   https://github.com/jmacd/xdelta-gpl/releases
+   Бери win64 збірку, переіменуй у xdelta3.exe.
+
+2. Поклади у dev/:
+     dev/make_patch.bat
+     dev/xdelta3.exe
+     dev/SHSM_clean.iso       ← твій чистий дамп
+     dev/SHSM_UA.iso          ← твоя готова UA-збірка
+
+3. Подвійний клік по make_patch.bat (або з командного рядка).
+   На виході:
+     dev/LittleBit_SHSM_PS2_UA_v0.8.xdelta
+     dev/HASHES.txt   ← з SHA256 трьох файлів та розміром патчу
+
+4. У консолі make_patch.bat покаже два рядки:
+     set "EXPECTED_SHA256=<хеш чистого ISO>"
+     set "EXPECTED_OUTPUT_SHA256=<хеш готового UA ISO>"
+   Скопіюй їх у PATCH_UA.bat (у блок НАЛАШТУВАННЯ на початку).
+
+5. Скопіюй у релізну папку:
+     PATCH_UA.bat              (з підставленими SHA256)
+     xdelta3.exe               (та сама копія)
+     LittleBit_SHSM_PS2_UA_v0.8.xdelta
+     README_UA.txt
+     HASHES.txt
+
+6. Запакуй усю папку Silent_Hill_Shattered_Memories_PS2_UA_Patch/ у ZIP
+   і викладай куди завгодно (Telegram, Mediafire, etc.).
+
+
+--- ПРИЙМАЛЬНЕ ТЕСТУВАННЯ ПЕРЕД ВИКЛАДЕННЯМ ---
+
+  [ ] make_patch.bat відпрацював без помилок, .xdelta створений
+  [ ] HASHES.txt має реальні SHA256 (не плейсхолдери)
+  [ ] У PATCH_UA.bat вписано EXPECTED_SHA256 та EXPECTED_OUTPUT_SHA256
+  [ ] Запуск PATCH_UA.bat без аргументу — показує українську інструкцію
+  [ ] Перетягування ЧУЖОГО ISO (PAL/інша гра) — видає "Це не той ISO"
+  [ ] Перетягування ЧИСТОГО ISO — створює _UA.iso з очікуваним SHA256
+  [ ] Готовий _UA.iso завантажується у PCSX2, текст українською
+  [ ] Архів зібраний: 5 файлів, без зайвого
+  [ ] README_UA.txt відкривається без кракозябр (UTF-8)

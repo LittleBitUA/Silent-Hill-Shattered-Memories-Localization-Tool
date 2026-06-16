@@ -44,6 +44,11 @@ PNG_GLYPH_MAP = {
     'i_diaeresis_upper.png': 0x00CF, # Ï  (user-drawn dots on Latin I)
     'gh_upper.png':       0x0490,   # Ґ  (user-drawn hook on Г)
     'gh_lower.png':       0x0491,   # ґ  (user-drawn hook on г)
+    'd_upper.png':        0x0414,   # Д  (user-redrawn, +2 px height)
+    'd_lower.png':        0x0434,   # д  (user-redrawn, +1 px height)
+    'yu_upper.png':       0x042E,   # Ю
+    'yu_lower.png':       0x044E,   # ю  (user-redrawn, +3 px width)
+    'exclaim.png':        0x0021,   # !
 }
 
 def run(cmd, label, env=None):

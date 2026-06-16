@@ -27,6 +27,9 @@
 # ============================================================================
 TEXT_TRANSLATION/
 TEXT_TRANSLATION*/
+# Full English source dump (4853 lines extracted from game binaries) —
+# also a per-user artifact, regenerated via the same template tool.
+/original.txt
 
 # ============================================================================
 # Build output directories (regenerated from sources by build_ua_*.py)
@@ -53,6 +56,22 @@ TEXT_TRANSLATION*/
 /gui/dist/
 /gui/dist-electron/
 /gui/release/
+
+# ============================================================================
+# Local IDE/agent state
+# ============================================================================
+tool/.claude/
+.claude/
+
+# ============================================================================
+# Release patcher dev folder — contains user's ISOs and xdelta3 binary
+# ============================================================================
+/release_patcher/dev/SHSM_*.iso
+/release_patcher/dev/xdelta3.exe
+/release_patcher/dev/HASHES.txt
+/release_patcher/dev/*.xdelta
+/release_patcher/Silent_Hill_Shattered_Memories_PS2_UA_Patch/xdelta3.exe
+/release_patcher/Silent_Hill_Shattered_Memories_PS2_UA_Patch/*.xdelta
 
 # ============================================================================
 # Python

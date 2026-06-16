@@ -1,0 +1,13 @@
+Silent Hill: Shattered Memories — UA-локалізація PS2
+Версія патчу: v0.8
+Дата створення: (заповнюється make_patch.bat автоматично)
+
+Чистий ISO (вхід):     SHSM_clean.iso
+  SHA256: (буде записано після запуску make_patch.bat)
+
+UA ISO (результат):    SHSM_UA.iso
+  SHA256: (буде записано після запуску make_patch.bat)
+
+xdelta-патч:           LittleBit_SHSM_PS2_UA_v0.8.xdelta
+  SHA256: (буде записано після запуску make_patch.bat)
+  Розмір: (буде записано після запуску make_patch.bat)

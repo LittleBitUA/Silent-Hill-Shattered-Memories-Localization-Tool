@@ -23,6 +23,19 @@ WORK     = ROOT / 'UA' / '_build'
 
 FONT_HASH = 0xf63bbff1
 
+# Custom glyph PNGs (user-edited overrides). Anything dropped into
+# unpacked/glyphs/ matching a known codepoint gets injected after the
+# base font patch. File name -> codepoint mapping:
+PNG_GLYPH_MAP = {
+    'd_upper.png':   0x0414,   # Д  (user-redrawn, taller)
+    'd_lower.png':   0x0434,   # д  (user-redrawn, taller)
+    'yu_upper.png':  0x042E,   # Ю
+    'yu_lower.png':  0x044E,   # ю  (user-redrawn, wider)
+    'exclaim.png':   0x0021,   # !
+    'gh_upper.png':  0x0490,   # Ґ  (donor remapped from Cyrillic Ё via add_gh_donors)
+    'gh_lower.png':  0x0491,   # ґ  (donor remapped from Cyrillic ё)
+}
+
 def main():
     if not NTSC_ISO.exists(): sys.exit(f'missing {NTSC_ISO}')
     if not RUS_SLUS.exists(): sys.exit(f'missing {RUS_SLUS}')
@@ -95,14 +108,31 @@ def main():
     assert h == FONT_HASH, f'unexpected font hash {h:x}'
     abs_off = boot_off + off
 
-    # Base UA donor patches: run ONLY if there's no patched raw font yet.
-    # If user has injected custom glyphs via kfont_png_edit.py the raw file
-    # already exists and we MUST NOT re-run patch_font_ua.py — that would
-    # overwrite custom drawings with default donor mappings.
+    # Always rebuild the raw font from scratch. kfont_png_edit.py inject
+    # APPENDS new bitmap data to the region tail (never in-place reuse),
+    # so consecutive builds accumulate dead bytes and eventually overflow
+    # the 0x8000-byte budget. Wiping the raw file every build forces a
+    # clean tail; PNG injection below reapplies the user's custom glyphs.
     raw_path = ROOT/'UA'/'_build'/'Font_EUR_ua_raw.bin'
-    if not raw_path.exists():
-        subprocess.check_call([sys.executable, str(TOOL/'patch_font_ua.py')],
-                              stdout=subprocess.DEVNULL)
+    if raw_path.exists():
+        raw_path.unlink()
+    subprocess.check_call([sys.executable, str(TOOL/'patch_font_ua.py')],
+                          stdout=subprocess.DEVNULL)
+    # Repurpose Cyrillic Ё/ё slots as Ґ/ґ donors (uses Cyrillic Г/г as
+    # initial bitmap). PNG injection below can overwrite with custom hooks.
+    subprocess.check_call([sys.executable, str(TOOL/'add_gh_donors.py')],
+                          stdout=subprocess.DEVNULL)
+
+    # Inject any user-edited PNG overrides from unpacked/glyphs/.
+    glyph_dir = ROOT / 'unpacked' / 'glyphs'
+    if glyph_dir.exists():
+        for png_name, cp in PNG_GLYPH_MAP.items():
+            png_path = glyph_dir / png_name
+            if png_path.exists():
+                subprocess.check_call([sys.executable, str(TOOL/'kfont_png_edit.py'),
+                                       'inject', hex(cp), '--in', str(png_path)],
+                                      stdout=subprocess.DEVNULL)
+                print(f'  inject U+{cp:04X} from {png_name}')
 
     # Always recompress raw font fresh (zopfli) so build picks up any
     # custom glyph edits made via kfont_png_edit.py since last build.
